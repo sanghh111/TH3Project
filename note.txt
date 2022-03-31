@@ -1,0 +1,87 @@
+Table for user
+
+User
+id intergerfield not null
+email : textfield
+password : textfield
+bird-day: datefield
+
+
+
+
+
+Table for ShoppingCart
+    Product_id
+    quality 
+    unit_price int
+    price
+
+
+Table Category
+    id
+    Name
+    Link_Image
+
+
+Table Product
+    id
+    Name
+    stock
+    price
+
+
+Table ProductImage
+    Product_id
+    ID 
+    Link_Image
+
+
+
+
+Table ProductDetail (mở rộng về template người ta chỉ nhập theo template là đc)
+    Product_id
+    id
+    content
+    Link_Image
+
+Table   BrandProduct
+            
+            
+Table Review
+    Product_id
+    id 
+    content
+    Vote
+            
+Table   Vote
+    Product_id
+    vote
+            
+            
+Table Order
+    ID
+    Date
+    UserID
+
+
+
+Table Order_detail
+    Order_ID
+    Product_id
+    quality
+    unit_price
+    price
+
+
+
+Table    Promotion
+    ID
+    Product_id
+    promotion
+
+
+Table Log_promotion
+    ID_promotion
+    date_start_promotion
+    date_end_promotion
+           
