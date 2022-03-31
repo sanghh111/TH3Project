@@ -1,0 +1,8 @@
+Học về Template
+
+Request ==> HTTP , contex như là một dữ liệu từ view
+
+Context là mapping 
+
+
+{{ bien }} data đc lấy từ context 
