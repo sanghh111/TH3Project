@@ -1,0 +1,27 @@
+
+
+Luyện tiếp về template
+
+sreach js conform
+
+js redirect
+
+dùng js bắt sự kiện
+
+dùng hàm làm view có nhiều ưu điểm và nhiều nhước điểm
+
+
+CLass base view
+
+    gọi tới django.views.generic để lấy ra đc listview, detailview
+
+
+DTB cứ CURD CREATE UPDATE READ Delete
+
+    Khi dùng listview thì template mặc định là 
+    fotmat template <tên app>/<tên model>_list.html
+
+    context mặc định có bên template là 'object_list'
+    Thay tên context template bằng 1 tên khác
+
+django.views.generic.edit lấy ra CreateView, UpdateView, DeleteView

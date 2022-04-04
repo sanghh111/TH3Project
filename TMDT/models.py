@@ -1,4 +1,5 @@
 from itertools import product
+from typing import Dict
 from django.db import models
 
 # Create your models here.
@@ -105,3 +106,4 @@ class Promotion(models.Model):
 
     class Meta():
         db_table = "Promotion"
+

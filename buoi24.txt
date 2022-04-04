@@ -1,0 +1,7 @@
+inheritance template django 
+    cần block
+
+extend kế thừa từ gì
+
+
+tìm hiểu funtion get_querry

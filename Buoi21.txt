@@ -1,0 +1,77 @@
+_____________________
+Buổi thứ 21
+_____________________
+Học về Template
+
+Request ==> HTTP , contex như là một dữ liệu từ view
+
+Context là mapping như là một dictionary
+
+
+{{ bien }} data đc lấy từ context 
+
+
+render(request,template,context)
+
+
+content_type gặp lại RESTAPI
+
+Sử dụng biến trong template 
+
+dùng 2 cặp dấu ngoặc nhọn {{}} in ra hết tất cả thông tin của biến của mình 
+
+keyWork = IN Expression trong Django
+
+#Note
+Nghiên cứu Template Django 
+ 
+https://docs.djangoproject.com/en/4.0/topics/templates/#:~:text=A%20Django%20template%20is%20a,is%20rendered%20with%20a%20context.
+
+
+Các tag trng template:
+1. {%for item in items%} {%endfor%} vòng lặp for
+2. {%if%} {%endif%} cây lệnh điều kiện 
+3. 
+4.
+
+
+
+
+Stor procedure trong sql ???
+
+.
+.
+.
+.
+.
+
+
+Trigger là gì???
+
+.
+.
+.
+.
+
+
+View trong sql ???
+
+.
+.
+.
+.
+
+
+
+
+Cách làm một trang CURD
+Create:
+    Step 1 tạo mới 1 hàm trong view.py có ít nhất 1 tham số
+    Step 2 Chỉnh sửa code HTML
+    Step 3 đăng kí url 
+Update
+Read
+Delete
+
+folder static trong app dùng để chứa folder css
+
