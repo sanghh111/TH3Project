@@ -25,6 +25,9 @@ class Category(models.Model):
     class Meta():
         db_table =  "Category"
 
+    def __str__(self) -> str:
+        return self.name
+
 class Product(models.Model):   
     
     name = models.CharField(max_length=50)
@@ -34,7 +37,10 @@ class Product(models.Model):
     
     class Meta():
         db_table =  "Product"
-    
+
+    def __str__(self):
+        return self.name
+        
 class ShoppingCart(models.Model):
     product_id = models.ForeignKey(Product,on_delete=models.CASCADE)
     quality = models.IntegerField()
@@ -54,7 +60,7 @@ class ProductImage(models.Model):
         db_table = "ProductImage"
 
 class ProductDetail(models.Model):
-    product_id = models.ForeignKey(Product,on_delete= models.CASCADE)
+    product_id = models.OneToOneField(Product,on_delete= models.CASCADE)
     content = models.CharField(max_length=50)
 
     class Meta():

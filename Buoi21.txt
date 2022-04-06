@@ -75,3 +75,11 @@ Delete
 
 folder static trong app dùng để chứa folder css
 
+FORM
+Tao file forms.py
+
+
+#MODEL Form: Tạo HTML FORMS DỰA TRÊN MODEL CÓ SẴN   
+
+
+Filde Lookup
