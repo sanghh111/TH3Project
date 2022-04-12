@@ -1,16 +1,23 @@
 # from tkinter import Place
+from webbrowser import BaseBrowser
 from django.core.exceptions import ValidationError
-from django.forms import ModelForm
+from django.forms import  ModelForm, NumberInput, Select,TextInput
 from .models import Product
 
 #MODEL Form: Tạo HTML FORMS DỰA TRÊN MODEL CÓ SẴN
-class ProductFrorm(ModelForm):
+class ProductForm(ModelForm):
     
 
 
     class Meta:
         model = Product
         fields = '__all__'
+        widgets = {
+            'name'   : TextInput(attrs={'class' : "form-control"}),
+            'stock' : NumberInput(attrs={'class' : "form-control"}),
+            'price' : NumberInput(attrs={'class' : "form-control"}),
+            'category_id' : Select(attrs={'class' : "form-control"}),
+        }
 
     # Validation phía server
     # Step 1: chọn field/trường muốn validate
@@ -29,4 +36,5 @@ class ProductFrorm(ModelForm):
             raise ValidationError(f"Name ({name}) đã tồn tại. Vui lòng chọn tên khác")
         except Product.DoesNotExist: # Bắt lỗi Product không tồn tại
             return name # được xài 
+
 

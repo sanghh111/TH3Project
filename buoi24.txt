@@ -3,5 +3,11 @@ inheritance template django
 
 extend kế thừa từ gì
 
+Pagination
+
+
 
 tìm hiểu funtion get_querry
+
+
+Tạo filter

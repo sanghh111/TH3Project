@@ -1,0 +1,59 @@
+        table User
+            ID
+            Password
+            cac thong tin co ban
+
+
+
+
+        ShoppingCart
+            Name
+            unit_price
+            quantity
+            total_price
+            product ono to many Product
+
+
+
+
+        Category (one to many Category)
+        Name
+        Category one to many Category
+
+        Product 
+            Name
+            Category one to many
+
+
+        Product_detail
+            product ono to one 
+            description
+            stock
+            price
+
+
+        Product_Image
+            product one to many product
+            link immage
+
+        Rating
+            product one to many
+            vote 
+            commect
+
+        Order
+            id_oder
+            many to one user
+            day start
+
+        Order_detail
+            id_oder (pk)
+            product (pk)
+
+
+
+
+
+
+
+

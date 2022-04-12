@@ -1,5 +1,3 @@
-
-
 Luyện tiếp về template
 
 sreach js conform
@@ -11,9 +9,11 @@ dùng js bắt sự kiện
 dùng hàm làm view có nhiều ưu điểm và nhiều nhước điểm
 
 
+Tìm hiểu về modal 
+
 CLass base view
 
-    gọi tới django.views.generic để lấy ra đc listview, detailview
+    gọi tới django.views.generic để lấy ra đc listview, detailview, CreateView, DetailView
 
 
 DTB cứ CURD CREATE UPDATE READ Delete
@@ -25,3 +25,15 @@ DTB cứ CURD CREATE UPDATE READ Delete
     Thay tên context template bằng 1 tên khác
 
 django.views.generic.edit lấy ra CreateView, UpdateView, DeleteView
+
+Lưu ý trong urls.py
+
+ .Tham số thêm vào URL là pk
+ .Thêm as_view()
+
+Note sử dụng list view phải có 1 trong 3 cái sau:
+    - định nghĩa model  
+    - định nghĩa queryset =  Place.object.all()
+    - override get_querysete()
+
+Ở trong CreateView  phải định nghĩa 'fields' với trường nào cần phỉa input vào 

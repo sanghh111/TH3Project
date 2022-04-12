@@ -1,53 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<style>
-    table {
-      font-family: Arial, Helvetica, sans-serif;
-      border-collapse: collapse;
-      width: 100%;
-    }
-    
-    table td, table th {
-      border: 1px solid #ddd;
-      padding: 8px;
-    }
-    
-    table tr:nth-child(even){background-color: #f2f2f2;}
-    
-    table tr:hover {background-color: #ddd;}
-    
-    table th {
-      padding-top: 12px;
-      padding-bottom: 12px;
-      text-align: left;
-      background-color: #04AA6D;
-      color: white;
-    }
-    </style>
-<body>
-    <table>    
+{% extends 'base/base.html' %}
+{% block title %}
+    <title>Products</title>
+{% endblock title %}
+
+{% block content %}
+
+    {% load static %}
+    <table class="table table-sm">    
         <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Stock</th>
-            <th>Price</th>
-            <th><a href="{% url 'add_product' %} ">+</a></th>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Stock</th>
+            <th scope="col">Price</th>
+            <th scope="col">
+                <a href="{% url 'add_product' %} ">
+                    <img src="{% static 'images/add-solid-pngrepo-com.png' %}" style="width : 25px; height: 25px;">
+                </a>
+            </th>            
         </tr>
         {% for product in products %}
             <tr>
-                <td>{{product.id}}</td>
+                <th scope="row">{{forloop.counter}}</th>
                 <td>{{product.name}}</td>
                 <td>{{product.stock}}</td>
                 <td>{{product.price}}</td>
-                <td></td>
+                <td>
+                    <a href="{%url 'product_detail'  product.id %}">
+                        <img src="{% static 'images/info-pngrepo-com.png' %} " style="width : 25px; height: 25px;" >
+                    </a>
+                    <a href="{%url 'update_class_product'  product.id %} ">
+                        <img src="{% static 'images/edit-pngrepo-com.png' %}" style="width : 25px; height: 25px;" >
+                    </a>
+                    <a class="delete-product" data-id="{{product.id}}" data-url="{%url 'delete_product'  product.id %} ">
+                        <img src="{% static 'images/delete-round-button-pngrepo-com.png' %}" style="width : 25px; height: 25px;" >
+                    </a>
+                </td>
             </tr>
         {% endfor %}
     </table>
-</body>
-</html>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+          <li class="page-item">
+            <a class="page-link" href="#" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    <p>Trang hiện tại: {{page_obj.number}}</p>
+    <p>Số lượng trang: {{page_obj.paginator.num_pages}}</p>
+{% endblock content %}
+
+{% block loadboostrap %}
+{{block.super}}
+<script>
+    $(document).ready(function(){
+    $(".delete-product").click(function() {
+        if (confirm(`Bạn có muốn xóa product với id = ${$(this).data("id")}`) == true){
+            window.location($(this).data('url'));
+        }
+        else{
+                alert(`Không xóa product với id = ${$(this).data("id")}`);
+        }
+    });
+})
+</script>   
+{% endblock loadboostrap %}

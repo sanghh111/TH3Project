@@ -1,1 +1,19 @@
 get_object_or_404
+
+regesstion expression deatil = ^views/(?P <place_id> [0-9]+)$
+
+
+
+Jquerry
+
+
+custom lại form (áp dụng boostrap)
+
+js get event    
+
+
+file static lien quan toi
+ . css 
+ . image
+ . js
+ . font 

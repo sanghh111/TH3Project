@@ -4,6 +4,7 @@ from django.db import models
 
 # Create your models here.
 
+# app_model
 
 class User(models.Model):
 
@@ -16,7 +17,6 @@ class User(models.Model):
 
     class Meta():
         db_table = "User"
-
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
@@ -49,8 +49,6 @@ class ShoppingCart(models.Model):
 
     class Meta():
         db_table = "ShoppingCart"
-
-
 
 class ProductImage(models.Model):
     product_id = models.ForeignKey(Product,on_delete=models.CASCADE)
@@ -92,7 +90,6 @@ class Order(models.Model):
     class Meta():
         db_table = "Order"
 
-
 class OrderDetail(models.Model):
     order_id = models.ForeignKey(Order,on_delete=models.CASCADE)
     product_id = models.ForeignKey(Product,on_delete=models.CASCADE)
@@ -102,7 +99,6 @@ class OrderDetail(models.Model):
 
     class Meta():
         db_table = "OrderDetail"
-
 
 class Promotion(models.Model):
     product_id = models.ForeignKey(Product,on_delete=models.CASCADE)
