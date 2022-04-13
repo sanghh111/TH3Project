@@ -12,6 +12,7 @@
 </head>
 
 <body>
+  {% autoescape off %}
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
           <a class="navbar-brand" href="{% url 'list_class_product' %}">T3H</a>
@@ -30,7 +31,8 @@
             </form>
           </div>
         </div>
-      </nav>    
+      </nav>  
+    {% endautoescape %}  
     {% block content %}
     {% endblock content %}
     {% block loadboostrap %}

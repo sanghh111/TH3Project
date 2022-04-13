@@ -48,7 +48,10 @@ def list_product(request):
         products = Product.objects.all()
     return render(request,
     "product/list.html",
-    {'products':products})
+    {
+        'products':products,
+        'keyword' : keyword
+        },)
 #CREATE CURD
 def add_product(request):
 

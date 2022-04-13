@@ -6,6 +6,9 @@
 {% block content %}
 
     {% load static %}
+    {% autoescape off %}
+        <p>{{keyword}}</p>
+    {% endautoescape %}
     <table class="table table-sm">    
         <tr>
             <th scope="col">ID</th>
