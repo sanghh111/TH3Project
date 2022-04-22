@@ -1,0 +1,22 @@
+{% extends 'base/base_user.html' %}
+{% block title %}
+    <title>Login</title>
+{% endblock title %}
+
+{% block content %}
+    <div class="col-md-6 offset-md-5">
+        <form method="post">
+            {% csrf_token %}
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email</label>
+                  <input type="text" class="form-control" name="email" id="email" aria-describedby="emailHelp">
+                </div>
+                <div class="mb-3">
+                  <label for="password  " class="form-label">Password</label>
+                  <input type="password" class="form-control" name="password" id="password">
+                </div>
+                <button type="submit" class="btn btn-primary">Đăng nhập</button>
+        </form>
+        <div>Bạn chưa có tài khoản <a href="{% url 'register_user' %}">tạo tài khoản</a></div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,27 @@
+{% extends 'base/base_user.html' %}
+{% block title %}
+    <title>Register User</title>
+{% endblock title %}
+
+{% block content %}
+    <div class="col-md-6 offset-md-5">
+        <form method="post">
+            {% csrf_token %}
+            <table>
+                {% for field in form  %}
+                <div class="form-group">
+                    {{field.label}}
+                    {{field}}
+                    {% if field.errors %}
+                    {% for error in field.errors  %}
+                    <div class="invalid-feedback" style="display: block;" >{{error}} </div>
+                        
+                    {% endfor %}
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </table>
+            <button type="submit" class="btn btn-primary">Đăng ký</button>
+        </form>
+    </div>
+{% endblock content %}
