@@ -78,5 +78,20 @@ from django.db.models import F
 
 #Querry expression
 #Bài toán đặt ra 
-product = ProductDetail.objects.annotate(product = F('product_id__user') )
-print('product: ', product[0].__dict__)
+# data = request.data
+# data.update(user = request.user.id)
+# try :
+#     product = Product.objects.get(id=data['product_id'])
+# except Product.DoesNotExist:
+#     return Response(
+#         data =  {'error' : 'product does not exist'},
+#         stauts = 404
+#     )
+# if product.stock < data['quality']:
+#     return Response(
+#         data =  {'error' : 'product does not exist'},
+#         stauts = 404
+#     )
+
+# data.update(unit_price = product.price)
+# data.update(total_price = product.price* data['quality'] )
