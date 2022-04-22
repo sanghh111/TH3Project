@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    # 'djangorestframework_simplejwt    '
+    'myapi.apps.MyapiConfig'
 ]
 
 MIDDLEWARE = [
@@ -125,7 +127,24 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+# REST_FRAMEWORK = {
+#     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+#     'PAGE_SIZE': 10
+# }
+
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ]
+}
+from datetime import timedelta
+
+ACCESS_TOKEN_LIFETIME = timedelta(hours=2)
+REFRESH_TOKEN_LIFETIME = timedelta(days=3)
+
+SIMPLE_JWT = {
+
+    'ACCESS_TOKEN_LIFETIME': ACCESS_TOKEN_LIFETIME,
+    'REFRESH_TOKEN_LIFETIME': REFRESH_TOKEN_LIFETIME,
+    'AUTH_HEADER_TYPES': ('Bearer',),
 }

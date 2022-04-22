@@ -48,41 +48,52 @@ class APIListShoppingCart(APIView):
     # ammout <= stock
     # }
     def post(self,request):
-        
-
         data = request.data
-        data.update(request.user.id)
-        try:
-            product = Product.objects.get(id = data['product_ids'] )
+        data.update(user = request.user)
+        try :
+            data['product_id'] = Product.objects.get(id=data['product_id'])
         except Product.DoesNotExist:
             return Response(
-                data = {
-                    'error' : 'Product does not exist'
-                },
-                status = 404
+              data =  {'error' : 'product does not exist'},
+              stauts = 404
             )
-        try:
-            if data['quality'] > product.stock:
-                return Response(
-                data = {
-                    'error' : 'quality garther than stock'
-                },
-                status = 400
-            )
-            data.update(product.price)
-        except KeyError:
+        if data['product_id'].stock < data['quality']:
             return Response(
-                data = {
-                    'error' : 'missing data'
-                },
-                status = 400
+              data =  {'error' : 'product does not exist'},
+              stauts = 404
             )
 
+        data.update(unit_price = data['product_id'].price)
+        data.update(total_price = data['product_id'].price* data['quality'] )
+        serializers.ShoppingCartSerializer().create(data)
+        return Response(
+            data = {
+                'message' : 'add success'
+            },
+            status= 201
+        )
+
+
+class APIDetailShoppingCart(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self,request,id):
+        pass
+
+    def put(self,request,id):
+        pass
+
+    def delete(self,request,id):
+        pass
+
+
 #THANH TOÁN SANR PHẨM
+
+#Tạo comment
 
 #XEM HÓA ĐƠN
 
 #XEM CHI TIẾT HÁO ĐƠN
 
-#Tạo comment
 
