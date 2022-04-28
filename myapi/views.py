@@ -1,400 +1,132 @@
-from django.shortcuts import render
-from rest_framework.decorators import api_view ,permission_classes
-from rest_framework.permissions import IsAuthenticated
+from itertools import product
+from rest_framework.decorators import api_view ,permission_classes, authentication_classes
+from rest_framework.permissions import IsAuthenticated ,IsAuthenticatedOrReadOnly , IsAdminUser
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.parsers import JSONParser
+from django.contrib.auth.models import User as AuthUser
+from django.db.models import F
+from Project.settings import STATUS_ORDER
+from rest_framework import status
 from TMDT.models import *
-from . import serializers
+from myapi.ModelViewSetMyCustom import ModelViewSetMyByUserID
+from myapi.authorization import ExampleAutentication
+from .serializers import *
+from datetime import datetime
+from rest_framework.viewsets import ModelViewSet,ReadOnlyModelViewSet
+from django.shortcuts import get_object_or_404
+from rest_framework.decorators import action
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+# CHức năng người mua 
 
-
-#SHOW ALL LIST CATEGORY (GET) AND ADD A NEW CATEGORY(POST)
-
-class APIListCategory(APIView):
+#XÂY DỰNG API VIEW
+# CATEGORY (ADMIN LÀM GÌ, SALER LÀM GÌ, END_USER LÀM GÌ)
+class APICategory(ModelViewSet):
     
-    # permission_classes = [IsAuthenticated]
-    #doc du lieu list category
-    def get(self,request):
-        # print(type(request.user))
-        category = Category.objects.all()
-        serializer = serializers.CategorySerializer(category,many = True)
-        return Response(
-            data=serializer.data,
-            status=200)
+    #Admin c
+
+
+    permission_classes = [IsAuthenticated]
+
+    queryset = Category.objects.all()
+    # queryset = 
+
+    serializer_class = CategorySerializer
+
+# Product (ADMIN LÀM GÌ, SALER LÀM GÌ, END_USER LÀM GÌ)
+    #THÊM PRODUCT AVALIABLE
+
+
+class APIProdct(ReadOnlyModelViewSet):
     
-    #Them du lieu moi
-    def post(self,request):
-        try:
-            Category.objects.get(name = request.data['name'])
-            return  Response(
-                data = {
-                    'error' : f'Cateogory name: {request.data["name"]}  existed ' 
-                },
-                status= 409
-            )   
-        except Category.DoesNotExist:
-            serializer = serializers.CategorySerializer().create(validated_data= request.data)
-            return Response(
-                data = {
-                    'message': "add proucts sucess" 
-                },
-                status = 201
-            )
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
 
-class APIDetailCategory(APIView):
+    #ADMIN SALER CURD
+    #CURD
+    #LIST   list customer, saler, admin
+    #CREATE create
+    #UPDATE 
+    #READ retrieve
+    #DELTE destroy
+    #END_USER: DETAIL
+    def get_permissions(self):
+        if self.action == 'product_detail':
+            permission_classes = [IsAuthenticatedOrReadOnly]
+        else : 
+            permission_classes = [IsAdminUser]
+        return [auth() for auth  in  permission_classes]
 
-    # 
-    #CHI TIẾT CATEGORY
-    def get(self,request,cateogry_id):
+    
+    @action( detail=True, method = ['get'])
+    def product_detail(self, request, pk):
+
+    
+
+        query = Product.objects.filter()
+        instance = get_object_or_404(query,pk =pk)
+        data = DetailProductSerializer(instance= instance).data
+        
+
+        return Response(data)
+        # data.update()     
+
+#ProductDetail ai laf nguoi tuong tac 
+#Tuong tac nhung gi   
+
+class APIProductDetail(ModelViewSetMyByUserID):
+
+    queryset = ProductDetail.objects.annotate(user = F('product_id__user')).all() 
+
+    permission_classes = [IsAdminUser]
+
+    serializer_class = ProductDetailSerializer
+
+    lookup_user = 'user'
+
+class APIProductImage(ModelViewSetMyByUserID):
+    
+    queryset = ProductImage.objects.annotate(user = F('product_id__user')).all() 
+
+    permission_classes = [IsAdminUser]
+
+    serializer_class = ProductImageSerializer
+
+    lookup_user = 'user'
+
+
+class APIShoppingCart(ModelViewSetMyByUserID):
+
+    permission_classes = [IsAuthenticated]
+
+    serializer_class = ShoppingCartSerializer
+
+    lookup_user = 'user'
+
+    queryset = ShoppingCart.objects.all()
+
+
+    #chinh serializaer_class
+
+    #list ko caanf overide
+    #retrive, create, destroy(Xem xét lại) 
+    #Create so sanh dieu kien voi vaidation 
+
+
+    def create(self, request, *args, **kwargs):
+        data =  request.data
+
+
+        #get prodcut_id 
         try:
-            category = Category.objects.get(id = cateogry_id)
-            serializer = serializers.CategorySerializer(category)
+            product = Product.objects.get(data['product_id'])
+        except Product.DoesNotExist as error:
             return Response(
-                data=serializer.data,
-                status=200)
-        except Category.DoesNotExist:
-            return  Response(
-                data = {
-                    'error' : f'Cateogory id: {request.data["name"]} does not exist ' 
+                data=  {
+                    'message' : f'{error}'
                 },
-                status= 404
+                status= status.HTTP_404_NOT_FOUND
             ) 
 
-    #chỉnh sửa category
-    def put(self, request,cateogry_id):
-        try:
-            category = Category.objects.get(id = cateogry_id)
-            try:
-                Category.objects.get( name = request.data['name'])
-                if category.name == request.data['name']:
-                    serializers.CategorySerializer().update(category,request.data)
-                    return Response(
-                    data = {
-                        'message': f'update proucts with id = {category.id} sucess' 
-                    },
-                    status = 200
-                )
-                else:
-                    return  Response(
-                data = {
-                    'error' : f'Cateogory name: {request.data["name"]} existed ' 
-                },
-                status= 409
-            ) 
-            except Category.DoesNotExist:
-                serializers.CategorySerializer().update(category,request.data)
-                return Response(
-                    data = {
-                        'message': f'update proucts with id = {request.data["id"]} sucess' 
-                    },
-                    status = 200
-                )
-        except Category.DoesNotExist:
-            return  Response(
-                data = {
-                    'error' : f'Cateogory id: {request.data["name"]} does not exist ' 
-                },
-                status= 404
-            ) 
+        data.update('user_id')
+        super().create()
 
-
-    def delete(self,request,cateogry_id):
-        try:
-            category = Category.objects.get(id = cateogry_id)
-            category.delete()
-            return Response(
-                data =  {
-                    'message': f'Delete success'
-                },
-                status= 200
-            )
-        except Category.DoesNotExist:
-            return  Response(
-                data = {
-                    'error' : f'Cateogory id: {cateogry_id} does not exist ' 
-                },
-                status= 404
-            ) 
-
-class APIListProduct(APIView):
-
-    # permission_classes = [IsAuthenticated]
-    #doc du lieu list category
-    def get(self,request):
-        product = Product.objects.all()
-
-        data = request.data
-        print('data: ', type(data))
-        serializer = serializers.ProductSerializer(product,many = True)
-        return Response(
-            data=serializer.data,
-            status=200)
-    
-    #Them du lieu moi
-    def post(self,request):
-        try:
-            Product.objects.get(name = request.data['name'])
-            return  Response(
-                data = {
-                    'error' : f'Product name: {request.data["name"]}  existed ' 
-                },
-                status= 409
-            )   
-        except Product.DoesNotExist:
-            try: 
-                request.data['category_id'] = Category.objects.get(id = request.data['category_id'])
-                data = request.data
-                data.update(user = request.user)
-                
-                serializer = serializers.ProductSerializer().create(validated_data= request.data)
-                return Response(
-                    data = {
-                        'message': "add proucts sucess" 
-                    },
-                    status = 201
-                )
-            except Category.DoesNotExist:
-                return  Response(
-                data = {
-                    'error' : f'Category_id: {request.data["category_id"]}  does not exist ' 
-                },
-                status= 404
-            )   
-
-class APIDetailProduct(APIView):
-    
-    # permission_classes = [IsAuthenticated]
-
-    def get(self, request, product_id):
-        try:
-            product = Product.objects.get( id = product_id)
-            data = serializers.ProductSerializer(product).data
-            
-            try:
-                product_detail = ProductDetail.objects.get(product_id = product_id)
-                serializer_product_detail = serializers.ProductDetailSerializer(product_detail).data
-                data.update(product_detail= serializer_product_detail)
-            except ProductDetail.DoesNotExist:
-                pass
-            except ProductDetail.MultipleObjectsReturned:
-                product_detail = ProductDetail.objects.filter(product_id = product_id)
-                serializer_product_detail = serializers.ProductDetailSerializer(product_detail, many =True).data
-                data.update(product_detail= serializer_product_detail)
-
-            return Response(
-                data = data,
-                status= 200
-            )
-        except Product.DoesNotExist :
-            return Response(
-                data =  {
-                    'error' : f'prodcut id {product_id} does not exist'
-                },
-                status= 404
-            )
-
-    def put(self, request, product_id):
-        try:
-            product = Product.objects.get(id = product_id)
-            try: 
-                request.data['category_id'] = Category.objects.get(id = request.data['category_id']) 
-                serializer = serializers.ProductSerializer().update( instance=product,validated_data= request.data)
-                return Response(
-                    data = {
-                        'message': f'update product with id: {product_id}'
-                    },
-                    status= 200
-                )
-            except Category.DoesNotExist:
-                return  Response(
-                data = {
-                    'error' : f'Category_id: {request.data["category_id"]}  does not exist ' 
-                },
-                status= 404
-            )   
-            except KeyError:
-                serializer = serializers.ProductSerializer().update( instance=product,validated_data= request.data)
-                return Response(
-                    data = {
-                        'message': f'update product with id: {product_id}'
-                    },
-                    status= 200
-                )
-        except Product.DoesNotExist:
-            return Response(
-                data =  {
-                    'error' : f'prodcut id {product_id} does not exist'
-                },
-                status= 404
-            )
-
-    def delete(self,request,product_id):
-        try:
-            product = Product.objects.get(id = product_id)
-            product.delete()
-            return Response(
-                data =  {
-                    'message' : f'Delete OK'
-                },
-                status= 200
-            )
-        except Product.DoesNotExist:
-            return Response(
-                data =  {
-                    'error' : f'prodcut id {product_id} does not exist'
-                },
-                status= 404
-            )   
-
-class APIListProductDetail(APIView):
-    
-    # permission_classes = [IsAuthenticated]
-
-    #Hiện thị list ProductDetail
-    #KHONG PHAI NG BAN KHONG DUOC THEM SAN PHAM VAO
-    def get(self, request):
-        product_detail = ProductDetail.objects.all()
-        serializer = serializers.ProductDetailSerializer(product_detail,many  = True) # show all
-        return Response(
-            data = serializer.data,
-            status= 200
-        )
-
-    # THÊM PRODUCT DETAIL VÀO PRODUCT ?
-    def post(self, request):
-        data = request.data
-        try:   
-            data['product_id'] = Product.objects.get(id  = data['product_id'])
-            try:
-                serializers.ProductDetailSerializer().create(data)
-                return Response(
-                    data = { 
-                        'message': 'ProductDeatil add success'
-                    },
-                    status= 201
-                )
-            except Exception as e:
-                return Response(
-                    data =  {
-                        'message' : f'{e}'
-                        },
-                    status= 400
-                )
-        except Product.DoesNotExist:
-            return Response(
-                data = {
-                    'message' : f'Product id: {data["product_id"]} does not exist'
-                },
-                status= 404
-            )
-        except KeyError:
-            return Response(
-                data = {
-                    'message' : "Missing data",
-                },
-                status= 400
-            )
-
-class APIDetailProduct(APIView):
-
-    # permission_classes = [IsAuthenticated]
-
-    def get(self,requet,product_detail_id):
-        try:
-            product_detail = ProductDetail.objects.get(id = product_detail_id)
-            serializer = serializers.ProductDetailSerializer(product_detail)
-            return Response(
-                data = serializer.data,
-                status= 200
-            )
-        except ProductDetail.DoesNotExist:
-            return Response(
-                data = {
-                    'error' : f"Product detail {product_detail_id} does not exist",
-                },
-                status= 404
-            )
-        except KeyError:
-            return Response(
-                data = {
-                    'message' : "Missing data",
-                },
-                status= 400
-            )
-    
-    def put(self,request,product_detail_id):
-        data = request.data
-        try:
-            product_detail = ProductDetail().objects.get(id = product_detail_id)
-            try:
-                data['product_id'] = Product.objects.get(id = data['product_id'])        
-                serializers.ProductDetailSerializer().update(
-                                instance=product_detail,
-                                validated_data= data
-                                )
-                return Response(
-                    data= {
-                        'message': f'Product Deltail {product_detail_id} update sucess'
-                    },
-                    status = 200)
-            except Product.DoesNotExist:
-                return Response(
-                    data = {
-                        'error' : f'Product  {data["product_id"]} does not exist',
-                    },
-                    status= 404
-                )
-            except KeyError:
-                serializers.ProductDetailSerializer().update(
-                                instance=product_detail,
-                                validated_data= data
-                                )
-                return Response(
-                    data= {
-                        'message': f'Product Deltail {product_detail_id} update sucess'
-                    },
-                    status = 200
-                )
-        except ProductDetail.DoesNotExist:
-            return Response(
-                data = {
-                    'error' : f"Product detail {product_detail_id} does not exist",
-                },
-                status= 404
-            )
-
-    def delete(self,request,product_detail_id):
-        try:
-            product_detail = ProductDetail().objects.get(id = product_detail_id)
-            product_detail.delete()
-            return Response(
-                    data= {
-                        'message': f'Product Deltail {product_detail_id} delete success'
-                    },
-                    status = 200
-                ) 
-        except ProductDetail.DoesNotExist:
-            return Response(
-                data = {
-                    'error' : f"Product detail {product_detail_id} does not exist",
-                },
-                status= 404
-            )
-    
-
-
-
-
-
-
-# Create your views here.
-#API có liên quan tới DATABAE -> áp dụng CURD
-#REST API: Cần biết url + HTTP method   
-#HTTP method:  các method thông dụng GET, POST, PUT, PATCH, DELETE, OPTIONS,..........
-#ỨNG với mỗi METHOD:
-# GET: Lấy thông tin từ APIs. Lấy hết hoặc 1 : READ
-# POST: Tạo mới 1 dữ liệu, thêm mới add, :ADD
-# PUT: Cập nhập, chỉnh sửa dữ liệu (Thường là gửi tất cả dữ liệu  của đối tượng, thường gửi thông tin củ cái gì muốn thay đổi)+     thông tin để xác định đối tượng chỉnh sửa: UPDATE
-# PATCH: Cập nhập, chỉnh sửa (Chỉ gửi những cái gì muốn đổi)+ thông tin để xác định đối tượng chỉnh sửa
-# DELETE: Xóa, destroy dữ liệu +Thông tin cần xóa, đối tượng cần xóa: DELETE
-# OPTIONS: Xác định trên URL hỗ trợ METHOD nào. 
+        
