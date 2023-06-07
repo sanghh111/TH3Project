@@ -122,7 +122,7 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
-    ""/home/TH3Project/TMDT/static/"",
+    "/home/TH3Project/TMDT/static/",
 ]
 
 # Default primary key field type
