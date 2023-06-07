@@ -4,7 +4,6 @@ from rest_framework.permissions import IsAuthenticated ,IsAuthenticatedOrReadOnl
 from rest_framework.response import Response
 from django.contrib.auth.models import User as AuthUser
 from django.db.models import F
-from Project.settings import STATUS_ORDER
 from rest_framework import status
 from TMDT.models import *
 from myapi.ModelViewSetMyCustom import ModelViewSetMyByUserID
